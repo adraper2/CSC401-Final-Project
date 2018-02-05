@@ -1,0 +1,75 @@
+-- Aidan Draper
+-- CSC 401
+-- Final Project Queries
+
+-- 1. Query to grab valence score avg for genres (Sheet: score by genre, Rows: A and B)
+SELECT sg.genre, AVG(ss.valence) 
+FROM`spotify_saved_songs` as ss
+INNER JOIN spotify_saved_genres as sg
+ON ss.song_id = sg.song_id
+GROUP BY 1
+ORDER BY 2 DESC
+
+-- 2. Query for vader score avg by genre excluding NULLs (Sheet: score by genre, Rows: F and G)
+SELECT sg.genre, AVG(ss.vader_lyrics) 
+FROM`spotify_saved_songs` as ss
+INNER JOIN spotify_saved_genres as sg
+ON ss.song_id = sg.song_id
+WHERE ss.vader_lyrics IS NOT NULL
+GROUP BY 1
+ORDER BY 2 DESC
+
+-- 3. Query for grabbing song data (Sheet: songs, Rows: A : F)
+SELECT song, date_added, saved_order, valence, popularity, vader_lyrics
+FROM spotify_saved_songs
+ORDER BY 3 ASC
+
+-- 4. Query for grabbing genre distribution (Sheet: genres, Rows: A and B)
+SELECT genre, count(id)
+FROM spotify_saved_genres
+GROUP BY genre
+ORDER BY 2 DESC
+
+-- 5. Query for finding percentage of lyrics found (count/total songs)
+SELECT songs
+FROM spotify_saved_songs
+WHERE lyrics IS NOT NULL
+
+-- 6. Query to grab rap and hip hop genre topics
+SELECT ss.song, sg.genre, st.topic, st.word1, st.word2, st.word3, st.word4, st.word5,
+st.word6, st.word7, st.vader_words
+FROM `spotify_saved_genres` as sg
+INNER JOIN spotify_saved_topics as st
+ON sg.song_id = st.song_id
+INNER JOIN spotify_saved_songs as ss
+ON sg.song_id = ss.song_id
+WHERE sg.genre LIKE '%rap'
+OR sg.genre LIKE '%hip hop'
+OR sg.genre = 'dwn trap'
+GROUP BY sg.song_id
+ORDER BY vader_words ASC
+
+-- 7. Query to grab rock genre topics
+SELECT ss.song, sg.genre, st.topic, st.word1, st.word2, st.word3, st.word4, st.word5,
+st.word6, st.word7, st.vader_words
+FROM `spotify_saved_genres` as sg
+INNER JOIN spotify_saved_topics as st
+ON sg.song_id = st.song_id
+INNER JOIN spotify_saved_songs as ss
+ON sg.song_id = ss.song_id
+WHERE sg.genre LIKE '%rock%'
+GROUP BY sg.song_id
+ORDER BY vader_words ASC
+
+-- 8. Query to grab pop genre topics
+SELECT ss.song, sg.genre, st.topic, st.word1, st.word2, st.word3, st.word4, st.word5,
+st.word6, st.word7, st.vader_words
+FROM `spotify_saved_genres` as sg
+INNER JOIN spotify_saved_topics as st
+ON sg.song_id = st.song_id
+INNER JOIN spotify_saved_songs as ss
+ON sg.song_id = ss.song_id
+WHERE sg.genre LIKE '%pop%' AND sg.genre NOT LIKE '%pop rap'
+GROUP BY sg.song_id
+ORDER BY vader_words ASC
+
